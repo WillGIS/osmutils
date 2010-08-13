@@ -1,0 +1,37 @@
+===========================
+ Shp2OSM & PG2OSM
+===========================
+The main goal of these utilities is something that 
+can pull data out of a PostGIS (postgresql) database and 
+convert it to OsmChange or JOSM format for use in OpenStreetMap.  
+
+Along with a PG2OSM utility, a Shp2OSM utility is also included.
+
+* Shp2OSM - utility for converting shapefiles to OSM
+* PG2OSM - utility for converting PostGIS data to OSM
+
+ REQUIREMENTS
+---------------
+* libxml2 - http://www.xmlsoft.org/
+* proj - http://trac.osgeo.org/proj/
+
+ COMPILE
+---------------
+
+gcc 
+  -Wall `xml2-config --cflags --libs` -lproj 
+  -o shp2osm 
+  dbfopen.c shpopen.c keyvals.c transform.c osm.c shape.c shp2osm.c
+
+ DONE
+---------------
+* Converts EPSG:2804 point shapefiles to OSM
+
+ TODO
+---------------
+* Makefile
+* Handle all shapefile geom types (lines,http://www.xmlsoft.org/ polygons, multipolygons ...)
+* Modify the code so it works with PostGIS data
+* For shapefiles and PostGIS, use a "rules" file to map fieldnames to osm tag names
+* Output either osmchange or josm formats
+* Reproject data from any supported EPSG projection to EPSG:4326
