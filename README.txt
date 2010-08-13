@@ -12,7 +12,7 @@ Along with a PG2OSM utility, a Shp2OSM utility is also included.
 
 
  COMPILE
----------
+------------
 
 gcc 
   -Wall `xml2-config --cflags --libs` -lproj 
@@ -20,6 +20,6 @@ gcc
   dbfopen.c shpopen.c keyvals.c transform.c osm.c shape.c shp2osm.c
 
  TODO
---------
+-------------
 * Makefile
 * ...
