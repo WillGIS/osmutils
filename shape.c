@@ -29,7 +29,7 @@ void shpReadFields(SHAPE *shape)
 	}
 }
 
-int ShpConvertOpenShape(SHAPE *shape)
+int shpConvertOpenShape(SHAPE *shape)
 {
 	int ret = SHPCONVERTOK;
 
@@ -56,3 +56,8 @@ int ShpConvertOpenShape(SHAPE *shape)
 	return ret;
 }
 
+void setShapeSrid(SHAPE *shape, char *srid)
+{
+	// TODO validate srid
+	shape->srid = srid;
+}

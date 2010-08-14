@@ -7,4 +7,4 @@ typedef struct node {
 	double y;
 } NODE;
 
-NODE transformPoint(NODE node);
+NODE transformPoint(NODE node, char *epsg);

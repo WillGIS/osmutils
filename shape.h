@@ -21,6 +21,8 @@ typedef struct shape
 
 	int filetype;
 
+	char *srid;
+
 	int num_entities;
 	int num_fields;
 	int num_records;
@@ -35,4 +37,5 @@ typedef struct shape
 } SHAPE;
 
 void shpReadFields(SHAPE *shape);
-int ShpConvertOpenShape(SHAPE *shape);
+int shpConvertOpenShape(SHAPE *shape);
+void setShapeSrid(SHAPE *shape, char *srid);
