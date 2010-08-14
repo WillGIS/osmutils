@@ -15,6 +15,7 @@ static void longUsage()
 	fprintf(stderr, "    -i|--infile\t\tShapefile input.\n");
 	fprintf(stderr, "    -o|--outfile\tOutput OSM file.\n");
 	fprintf(stderr, "    -s|--srid\t\tSpecify source SRID (default: EPSG 4326).\n");
+	fprintf(stderr, "    -?|\t\tDisplay help information.\n");
 	fprintf(stderr, "\n");
 }
 
@@ -66,7 +67,6 @@ int main(int argc, char **argv)
 			case 'o':
 				config->outfile = optarg;
 				break;
-			// specify srid
 			case 's':
 				setShapeSrid(shape, optarg);
 				break;
@@ -94,6 +94,11 @@ int main(int argc, char **argv)
 		fprintf(stderr, "Error: Output file not specified.\n");
 		usage();
 		exit(0);
+	}
+
+	if (shape->srid == NULL)
+	{
+		shape->srid = "4326";
 	}
 
 	shape->shpfile = config->infile;

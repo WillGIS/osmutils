@@ -1,5 +1,7 @@
 #include "osm.h"
 
+char *srid;
+
 /*
  * utility functions to convert
  * dbl or int to char
@@ -83,15 +85,18 @@ xmlNodePtr tagElement(KEYVAL *tag)
 
 xmlNodePtr nodeElement(NODE node)
 {
-	node = transformPoint(node);
+	if (strcmp(srid, "4326") != 0) 
+	{
+		node = transformPoint(node, srid);
+	}
 
 	xmlNodePtr osmNode;
 	osmNode = xmlNewNode(NULL, BAD_CAST "node");
 	xmlNewProp(osmNode, BAD_CAST "id", BAD_CAST xmlEscape(int2char(node.id)));
 	xmlNewProp(osmNode, BAD_CAST "lon", BAD_CAST xmlEscape(dbl2char(node.x)));
 	xmlNewProp(osmNode, BAD_CAST "lat", BAD_CAST xmlEscape(dbl2char(node.y))); 
-	
 	return osmNode;
+	
 }
 
 xmlNodePtr nodeRef(NODE node)
@@ -236,6 +241,8 @@ xmlDocPtr createXmlDoc(SHAPE *shape)
 	root_node = xmlNewNode(NULL, BAD_CAST "osm");
 	xmlNewProp(root_node, BAD_CAST "version", BAD_CAST xmlEscape("0.6"));
 	xmlDocSetRootElement(doc, root_node);
+
+	srid = shape->srid;
 	
 	if (shape->filetype == SHPT_POINT)
 	{

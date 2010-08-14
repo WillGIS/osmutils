@@ -20,7 +20,7 @@ NODE transformPoint(NODE node, char *epsg)
 //			break;
 //	}
 		
-	if (fromEpsg != NULL)
+	if (fromEpsg != '4326')
 	{
 		pj_transform(fromEpsg, wgs84, 1, 1, &node.x, &node.y, NULL);
 		node.x *= RAD_TO_DEG;
