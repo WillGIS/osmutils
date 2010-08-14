@@ -162,9 +162,10 @@ void parsePoint(xmlNodePtr root_node, SHAPE *shape)
 
 void parseLine(xmlNodePtr root_node, SHAPE *shape)
 {
-	int i, k = 0;
-	int l, m, v;
+	int i, l, m, v;
+	int k = 0;
 	int n = -1;
+	int o = -1;
 
 	int start_vertex, end_vertex;
 	char val[1024];
@@ -177,15 +178,17 @@ void parseLine(xmlNodePtr root_node, SHAPE *shape)
 	for (i = 0; i < shape->num_entities; i++)
 	{
 		obj = SHPReadObject(shape->handleShp, k);
-		osmWay = wayElement(n);
 
-		// FIXME - read all line segment parts
 		for (m = 0; m < obj->nParts; m++) 
-		{		
+		{
+			osmWay = wayElement(o);
+			
 			if (m == obj->nParts-1)
 			{
+				// is linestring
 				end_vertex = obj->nVertices;
 			} else {
+				// is multilinestring
 				end_vertex = obj->panPartStart[m+1];
 			}
 
@@ -198,29 +201,27 @@ void parseLine(xmlNodePtr root_node, SHAPE *shape)
 				node.y = obj->padfY[v];
 				xmlAddChild(root_node, nodeElement(node));
 				xmlAddChild(osmWay, nodeRef(node));
-				
-//				dynnodearray_addNode(dnas[m], &node);
-
 				n--;
 			}
-		}
 
-		if (shape->num_fields > 0)
-		{
-			// has tags
-			for (l = 0; l < shape->num_fields; l++)
+			if (shape->num_fields > 0)
 			{
-				setKey(&tags, shape->field_names[l]);
+				// has tags
+				for (l = 0; l < shape->num_fields; l++)
+				{
+					setKey(&tags, shape->field_names[l]);
 
-				// set tag value
-				snprintf(val, 1024, "%s", DBFReadStringAttribute(shape->handleDbf, k, l));
-				setValue(&tags, val);
+					// set tag value
+					snprintf(val, 1024, "%s", DBFReadStringAttribute(shape->handleDbf, k, l));
+					setValue(&tags, val);
 
-				xmlAddChild(osmWay, tagElement(&tags));
+					xmlAddChild(osmWay, tagElement(&tags));
+				}
 			}
-		}
 
-		xmlAddChild(root_node, osmWay);
+			xmlAddChild(root_node, osmWay);
+			o--;
+		}
 
 		k++;
 	}
