@@ -72,37 +72,6 @@ const char *xmlEscape(const char *in)
 	return escape_tmp;
 }
 
-DYNNODEARRAY *
-dynnodearray_create(size_t initial_capacity, int dims)
-{
-	DYNNODEARRAY *ret=malloc(sizeof(DYNNODEARRAY));
-
-	if ( initial_capacity < 1 ) initial_capacity=1;
-
-	ret->na=malloc(sizeof(NODEARRAY));
-	ret->na->dims=dims;
-	ret->nodesize=nodeArray_nodesize(ret->na);
-	ret->capacity=initial_capacity;
-	ret->na->serialized_nodelist=malloc(ret->nodesize*ret->capacity);
-	ret->na->nnodes=0;
-
-	return ret;
-}
-
-// TODO
-int dynnodearray_addNode(DYNNODEARRAY *dna, NODE *node)
-{
-	NODEARRAY *na=dna->na;
-	NODE tmp;
-
-	return 1;
-}
-
-int nodeArray_nodesize(const NODEARRAY *na)
-{
-	return sizeof(double)*TYPE_NDIMS(na->dims);
-}
-
 xmlNodePtr tagElement(KEYVAL *tag)
 {        
 	xmlNodePtr tagNode;
@@ -202,21 +171,17 @@ void parseLine(xmlNodePtr root_node, SHAPE *shape)
 
 	xmlNodePtr osmWay;
 	SHPObject *obj = NULL;
-	DYNNODEARRAY **dnas;
 	NODE node;
 	KEYVAL tags;
 
 	for (i = 0; i < shape->num_entities; i++)
 	{
 		obj = SHPReadObject(shape->handleShp, k);
-		dnas = malloc(sizeof(DYNNODEARRAY*) * obj->nParts);
 		osmWay = wayElement(n);
 
 		// FIXME - read all line segment parts
 		for (m = 0; m < obj->nParts; m++) 
 		{		
-			dnas[m] = dynnodearray_create(obj->nParts, 0);
-
 			if (m == obj->nParts-1)
 			{
 				end_vertex = obj->nVertices;
