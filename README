@@ -10,17 +10,14 @@ Along with a PG2OSM utility, a Shp2OSM utility is also included.
 * Shp2OSM - utility for converting shapefiles to OSM
 * PG2OSM - utility for converting PostGIS data to OSM
 
-
  REQUIREMENTS
 ---------------
 * libxml2 - http://www.xmlsoft.org/
 * proj - http://trac.osgeo.org/proj/
 
-
  COMPILE
 ---------------
 * make
-
 
  USAGE
 ---------------
@@ -33,12 +30,6 @@ Options
     -s|--srid		Specify source SRID
 			(default: no transformation performed; assumes SRID already is EPSG:4326).
     -?|			Display help information.
-
-
- DONE
----------------
-* Converts EPSG:2804 point shapefiles to OSM
-
 
  TODO
 ---------------
