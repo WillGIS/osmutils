@@ -36,6 +36,18 @@ typedef struct shape
 	double maxbound[4];
 } SHAPE;
 
+typedef struct point {
+	double x;
+	double y;
+} POINT;
+
+typedef struct multipoint {
+	double bbox[4];
+	int num_points;
+	POINT *points;
+} MULTIPOINT;
+
 void shpReadFields(SHAPE *shape);
 int shpConvertOpenShape(SHAPE *shape);
 void setShapeSrid(SHAPE *shape, char *srid);
+MULTIPOINT parsePoints(SHAPE *shape);

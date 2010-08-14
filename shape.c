@@ -61,3 +61,30 @@ void setShapeSrid(SHAPE *shape, char *srid)
 	// TODO validate srid
 	shape->srid = srid;
 }
+
+MULTIPOINT parsePoints(SHAPE *shape)
+{
+	int i, k = 0;
+	POINT pt;
+	MULTIPOINT pts;
+
+	SHPObject *obj = NULL;
+	obj = malloc(sizeof(SHPObject));
+
+	pts.num_points = shape->num_entities;
+	pts.points = malloc(sizeof(POINT) * pts.num_points);
+
+	// negative ids required for new osm nodes
+	for (i = 0; i < pts.num_points; i++)
+	{
+		obj = SHPReadObject(shape->handleShp, k);
+
+		pt.x = obj->padfX[0];
+		pt.y = obj->padfY[0];
+		pts.points[k] = pt;
+
+		k++;
+	}
+
+	return pts;
+}

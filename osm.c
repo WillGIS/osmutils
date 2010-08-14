@@ -24,8 +24,8 @@ char * int2char(int i)
 
 /*
  * source: openstreetmap utils
- *		planet.osm/C/output_osm.c
- * FIXME: add iconv support
+ *	planet.osm/C/output_osm.c
+ * TODO: add iconv support
  */
 const char *xmlEscape(const char *in)
 {
@@ -117,29 +117,27 @@ xmlNodePtr wayElement(int id)
 	return osmWay;
 }
 
-void parsePoint(xmlNodePtr root_node, SHAPE *shape)
+// TODO: separate tag parsing
+void buildNodes(xmlNodePtr root_node, MULTIPOINT pts, SHAPE *shape) 
 {
 	int i, k = 0;
 	int l;
 	char val[1024];
 
 	xmlNodePtr osmNode;
-	SHPObject *obj = NULL;
 	NODE node;
 	KEYVAL tags;
 
-	obj = malloc(sizeof(SHPObject));
 	initList(&tags);
 
-	int j = 0 - shape->num_entities;
+	int j = 0 - pts.num_points;
 
 	// negative ids required for new osm nodes
 	for (i = -1; i > j; i--)
 	{
-		obj = SHPReadObject(shape->handleShp, k);
 		node.id = i;
-		node.x = obj->padfX[0];
-		node.y = obj->padfY[0];
+		node.x = pts.points[k].x;
+		node.y = pts.points[k].y;
 
 		osmNode = nodeElement(node);
 
@@ -246,7 +244,7 @@ xmlDocPtr createXmlDoc(SHAPE *shape)
 	
 	if (shape->filetype == SHPT_POINT)
 	{
-		parsePoint(root_node, shape);
+		buildNodes(root_node, parsePoints(shape), shape);
 	} else if (shape->filetype == SHPT_ARC) {
 		parseLine(root_node, shape);
 	} else {
