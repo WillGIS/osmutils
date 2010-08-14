@@ -235,22 +235,28 @@ xmlDocPtr createXmlDoc(SHAPE *shape)
 	xmlDocPtr doc = NULL;
 	xmlNodePtr root_node = NULL;
 
+	srid = shape->srid;
+	
 	doc = xmlNewDoc(BAD_CAST "1.0");
 	root_node = xmlNewNode(NULL, BAD_CAST "osm");
 	xmlNewProp(root_node, BAD_CAST "version", BAD_CAST xmlEscape("0.6"));
 	xmlDocSetRootElement(doc, root_node);
 
-	srid = shape->srid;
-	
 	if (shape->filetype == SHPT_POINT)
 	{
 		buildNodes(root_node, parsePoints(shape), shape);
+	} else if (shape->filetype == SHPT_MULTIPOINT) {
+		// TODO
+		fprintf(stderr, "Error: Unknown or invalid shapefile type\n");
+		exit(0);
 	} else if (shape->filetype == SHPT_ARC) {
 		parseLine(root_node, shape);
 	} else {
 		fprintf(stderr, "Error: Unknown or invalid shapefile type\n");
 		exit(0);
 	}
+
+	fprintf(stderr, "Done: processed %d records.\n", shape->num_records);
 
 	return doc;
 }

@@ -9,7 +9,6 @@ void shpReadFields(SHAPE *shape)
 
 	shape->num_fields = DBFGetFieldCount(shape->handleDbf);
 	shape->num_records = DBFGetRecordCount(shape->handleDbf);
-	fprintf(stderr, "Num records: %i\n", shape->num_records);
 
 	shape->field_names = malloc(shape->num_fields * sizeof(char*));
 	shape->types = (DBFFieldType *)malloc(shape->num_fields * sizeof(int));

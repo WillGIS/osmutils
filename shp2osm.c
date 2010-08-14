@@ -111,11 +111,17 @@ int main(int argc, char **argv)
 		fprintf(stderr, "Error reading shapefile");
 		exit(1);
 	} else {
-		xmlDocPtr doc;
 
-		doc = createXmlDoc(shape);
-		xmlSaveFormatFileEnc(config->outfile, doc, "UTF-8", 1);
-		xmlFreeDoc(doc);
+		if (sridIsValid(shape->srid) == 1)
+		{
+			xmlDocPtr doc;
+			doc = createXmlDoc(shape);
+			xmlSaveFormatFileEnc(config->outfile, doc, "UTF-8", 1);
+			xmlFreeDoc(doc);
+		} else {
+			fprintf(stderr, "Error: SRID %s is invalid.\n", shape->srid);
+			exit(1);
+		}
 	}
 
 	free(config);

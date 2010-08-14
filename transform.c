@@ -4,29 +4,35 @@
 #include <string.h>
 #include <stdlib.h>
 
-NODE transformPoint(NODE node, char *epsg)
+projPJ toSRID;
+projPJ fromSRID = NULL;
+
+int sridIsValid(char *srid)
 {
-	projPJ wgs84;
-	projPJ fromEpsg = NULL;
+	int valid = 0;
+	char *p, srid_string[32];	
 
-	wgs84 = pj_init_plus("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs");
+	sprintf(srid_string, "+init=epsg:%s", srid);
+	p = srid_string;
 
-//	switch (epsg) {
-//		case '2804':
-			fromEpsg = pj_init_plus("+proj=lcc +lat_1=38.3 +lat_2=39.45 +lat_0=37.66666666666666 +lon_0=-77 +x_0=400000 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs");
-//			break;
-//		default: 
-//			fprintf(stderr, "Error: EPSG %s is invalid.", epsg);
-//			break;
-//	}
-		
-	if (fromEpsg != '4326')
-	{
-		pj_transform(fromEpsg, wgs84, 1, 1, &node.x, &node.y, NULL);
-		node.x *= RAD_TO_DEG;
-		node.y *= RAD_TO_DEG;
+	if ((fromSRID = pj_init_plus(p))) {
+		toSRID = pj_init_plus("+init=epsg:4326");
+		valid = 1;
 	}
 
-	return node;
+	return valid;
+}
 
+NODE transformPoint(NODE node, char *srid)
+{
+	// TODO
+	if (sridIsValid(srid) == 1) 
+	{
+		pj_transform(fromSRID, toSRID, 1, 1, &node.x, &node.y, NULL);
+		node.x *= RAD_TO_DEG;
+		node.y *= RAD_TO_DEG;
+		free(fromSRID);
+	} 
+
+	return node;
 }

@@ -7,4 +7,5 @@ typedef struct node {
 	double y;
 } NODE;
 
+int sridIsValid(char *srid);
 NODE transformPoint(NODE node, char *epsg);
