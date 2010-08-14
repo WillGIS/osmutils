@@ -7,7 +7,7 @@
 char * dbl2char(double d) 
 {
 	char *p, text[32];
-	sprintf(text, "%g", d);
+	sprintf(text, "%.8g", d);
 	p = text;
 	return p;
 }
