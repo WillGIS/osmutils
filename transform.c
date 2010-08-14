@@ -25,7 +25,7 @@ int sridIsValid(char *srid)
 
 NODE transformPoint(NODE node, char *srid)
 {
-	// TODO
+	// TODO - if toSRID == fromSRID, don't bother with transform
 	if (sridIsValid(srid) == 1) 
 	{
 		pj_transform(fromSRID, toSRID, 1, 1, &node.x, &node.y, NULL);

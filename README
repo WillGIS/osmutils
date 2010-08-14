@@ -10,27 +10,41 @@ Along with a PG2OSM utility, a Shp2OSM utility is also included.
 * Shp2OSM - utility for converting shapefiles to OSM
 * PG2OSM - utility for converting PostGIS data to OSM
 
+
  REQUIREMENTS
 ---------------
 * libxml2 - http://www.xmlsoft.org/
 * proj - http://trac.osgeo.org/proj/
 
+
  COMPILE
 ---------------
-make
+* make
+
 
  USAGE
 ---------------
-shp2osm <shapefile> <osmfile>
+shp2osm [<options>] <shapefile> <osmfile>
+
+Options
+    -h|--help		Help information.
+    -i|--infile		Shapefile input.
+    -o|--outfile	Output OSM file.
+    -s|--srid		Specify source SRID
+			(default: no transformation performed; assumes SRID already is EPSG:4326).
+    -?|			Display help information.
+
 
  DONE
 ---------------
 * Converts EPSG:2804 point shapefiles to OSM
 
+
  TODO
 ---------------
 * Makefile
-* Handle all shapefile geom types (lines,http://www.xmlsoft.org/ polygons, multipolygons ...)
+* Handle all shapefile geom types (multipoints, lines, polygons...)
+* Handle multipolygons
 * Modify the code so it works with PostGIS data
 * For shapefiles and PostGIS, use a "rules" file to map fieldnames to osm tag names
 * Output either osmchange or josm formats

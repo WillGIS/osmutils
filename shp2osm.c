@@ -14,8 +14,8 @@ static void longUsage()
 	fprintf(stderr, "    -h|--help\t\tHelp information.\n");
 	fprintf(stderr, "    -i|--infile\t\tShapefile input.\n");
 	fprintf(stderr, "    -o|--outfile\tOutput OSM file.\n");
-	fprintf(stderr, "    -s|--srid\t\tSpecify source SRID (default: EPSG 4326).\n");
-	fprintf(stderr, "    -?|\t\tDisplay help information.\n");
+	fprintf(stderr, "    -s|--srid\t\tSpecify source SRID\n\t\t\t(default: no transformation performed; assumes SRID already is EPSG:4326).\n");
+	fprintf(stderr, "    -?|\t\t\tDisplay help information.\n");
 	fprintf(stderr, "\n");
 }
 
