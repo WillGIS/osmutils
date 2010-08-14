@@ -18,7 +18,6 @@
 #include <libxml/parser.h>
 
 /* shpconvert includes */
-//#include "shape.h"
 #include "osm.h"
 
 typedef struct shp_convert_config

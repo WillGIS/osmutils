@@ -72,6 +72,37 @@ const char *xmlEscape(const char *in)
 	return escape_tmp;
 }
 
+DYNNODEARRAY *
+dynnodearray_create(size_t initial_capacity, int dims)
+{
+	DYNNODEARRAY *ret=malloc(sizeof(DYNNODEARRAY));
+
+	if ( initial_capacity < 1 ) initial_capacity=1;
+
+	ret->na=malloc(sizeof(NODEARRAY));
+	ret->na->dims=dims;
+	ret->nodesize=nodeArray_nodesize(ret->na);
+	ret->capacity=initial_capacity;
+	ret->na->serialized_nodelist=malloc(ret->nodesize*ret->capacity);
+	ret->na->nnodes=0;
+
+	return ret;
+}
+
+// TODO
+int dynnodearray_addNode(DYNNODEARRAY *dna, NODE *node)
+{
+	NODEARRAY *na=dna->na;
+	NODE tmp;
+
+	return 1;
+}
+
+int nodeArray_nodesize(const NODEARRAY *na)
+{
+	return sizeof(double)*TYPE_NDIMS(na->dims);
+}
+
 xmlNodePtr tagElement(KEYVAL *tag)
 {        
 	xmlNodePtr tagNode;
@@ -81,24 +112,24 @@ xmlNodePtr tagElement(KEYVAL *tag)
 	return tagNode;
 }
 
-xmlNodePtr nodeElement(NODE *node)
+xmlNodePtr nodeElement(NODE node)
 {
-	transformPoint(node);
+	node = transformPoint(node);
 
 	xmlNodePtr osmNode;
 	osmNode = xmlNewNode(NULL, BAD_CAST "node");
-	xmlNewProp(osmNode, BAD_CAST "id", BAD_CAST xmlEscape(int2char(node->id)));
-	xmlNewProp(osmNode, BAD_CAST "lon", BAD_CAST xmlEscape(dbl2char(node->x)));
-	xmlNewProp(osmNode, BAD_CAST "lat", BAD_CAST xmlEscape(dbl2char(node->y))); 
+	xmlNewProp(osmNode, BAD_CAST "id", BAD_CAST xmlEscape(int2char(node.id)));
+	xmlNewProp(osmNode, BAD_CAST "lon", BAD_CAST xmlEscape(dbl2char(node.x)));
+	xmlNewProp(osmNode, BAD_CAST "lat", BAD_CAST xmlEscape(dbl2char(node.y))); 
 	
 	return osmNode;
 }
 
-xmlNodePtr nodeRef(NODE *node)
+xmlNodePtr nodeRef(NODE node)
 {
 	xmlNodePtr nd;
 	nd = xmlNewNode(NULL, BAD_CAST "nd");
-	xmlNewProp(nd, BAD_CAST "ref", BAD_CAST xmlEscape(int2char(node->id)));
+	xmlNewProp(nd, BAD_CAST "ref", BAD_CAST xmlEscape(int2char(node.id)));
 	
 	return nd;
 }
@@ -120,11 +151,10 @@ void parsePoint(xmlNodePtr root_node, SHAPE *shape)
 
 	xmlNodePtr osmNode;
 	SHPObject *obj = NULL;
-	NODE *node;
+	NODE node;
 	KEYVAL tags;
 
 	obj = malloc(sizeof(SHPObject));
-	node = malloc(sizeof(NODE));
 	initList(&tags);
 
 	int j = 0 - shape->num_entities;
@@ -133,9 +163,9 @@ void parsePoint(xmlNodePtr root_node, SHAPE *shape)
 	for (i = -1; i > j; i--)
 	{
 		obj = SHPReadObject(shape->handleShp, k);
-		node->id = i;
-		node->x = obj->padfX[0];
-		node->y = obj->padfY[0];
+		node.id = i;
+		node.x = obj->padfX[0];
+		node.y = obj->padfY[0];
 
 		osmNode = nodeElement(node);
 
@@ -164,31 +194,50 @@ void parsePoint(xmlNodePtr root_node, SHAPE *shape)
 void parseLine(xmlNodePtr root_node, SHAPE *shape)
 {
 	int i, k = 0;
-	int l, m;
+	int l, m, v;
 	int n = -1;
+
+	int start_vertex, end_vertex;
 	char val[1024];
 
 	xmlNodePtr osmWay;
 	SHPObject *obj = NULL;
-	NODE *node;
+	DYNNODEARRAY **dnas;
+	NODE node;
 	KEYVAL tags;
 
 	for (i = 0; i < shape->num_entities; i++)
 	{
 		obj = SHPReadObject(shape->handleShp, k);
+		dnas = malloc(sizeof(DYNNODEARRAY*) * obj->nParts);
 		osmWay = wayElement(n);
 
 		// FIXME - read all line segment parts
 		for (m = 0; m < obj->nParts; m++) 
-		{
-			node = malloc(sizeof(NODE));			
-			node->id = n;
-			node->x = obj->padfX[m];
-			node->y = obj->padfY[m];
-			xmlAddChild(root_node, nodeElement(node));
-			xmlAddChild(osmWay, nodeRef(node));
-			free(node);
-			n--;
+		{		
+			dnas[m] = dynnodearray_create(obj->nParts, 0);
+
+			if (m == obj->nParts-1)
+			{
+				end_vertex = obj->nVertices;
+			} else {
+				end_vertex = obj->panPartStart[m+1];
+			}
+
+			start_vertex = obj->panPartStart[m];
+
+			for (v = start_vertex; v < end_vertex; v++)
+			{
+				node.id = n;
+				node.x = obj->padfX[v];
+				node.y = obj->padfY[v];
+				xmlAddChild(root_node, nodeElement(node));
+				xmlAddChild(osmWay, nodeRef(node));
+				
+//				dynnodearray_addNode(dnas[m], &node);
+
+				n--;
+			}
 		}
 
 		if (shape->num_fields > 0)
