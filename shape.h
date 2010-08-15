@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 /* include shapelib */
+#include "keyvals.h"
 #include "shapefil.h"
 
 #define SHPCONVERTOK		-1
@@ -27,7 +29,8 @@ typedef struct shape
 	int num_fields;
 	int num_records;
 
-	char **field_names;	
+	char **field_names;
+	KEYVAL *fields;	
 	DBFFieldType *types;
 	int *widths;
 	int *precisions;

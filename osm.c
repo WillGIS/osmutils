@@ -146,7 +146,7 @@ void buildNodes(xmlNodePtr root_node, MULTIPOINT pts, SHAPE *shape)
 			// has tags
 			for (l = 0; l < shape->num_fields; l++)
 			{
-				setKey(&tags, shape->field_names[l]);
+				setKey(&tags, getValue(&shape->fields[l]));
 
 				// set tag value
 				snprintf(val, 1024, "%s", DBFReadStringAttribute(shape->handleDbf, k, l));

@@ -1,5 +1,16 @@
 #include "shape.h"
 
+/* Convert the string to lower case */
+char * strtolower(char *s)
+{
+	int j;
+
+	for (j = 0; j < strlen(s); j++)
+		s[j] = tolower(s[j]);
+
+	return s;
+}
+
 void shpReadFields(SHAPE *shape)
 {
 	int j;
@@ -14,9 +25,12 @@ void shpReadFields(SHAPE *shape)
 	shape->types = (DBFFieldType *)malloc(shape->num_fields * sizeof(int));
 	shape->widths = malloc(shape->num_fields * sizeof(int));
 	shape->precisions = malloc(shape->num_fields * sizeof(int));
+	shape->fields = malloc(shape->num_fields * sizeof(KEYVAL));
 
 	for (j = 0; j < shape->num_fields; j++)
-	{
+	{	
+		initList(&shape->fields[j]);
+
 		type = DBFGetFieldInfo(shape->handleDbf, j, name, &field_width, &field_precision);
 
 		shape->types[j] = type;
@@ -25,6 +39,9 @@ void shpReadFields(SHAPE *shape)
 
 		shape->field_names[j] = malloc(strlen(name) + 1);
 		strcpy(shape->field_names[j], name);
+		
+		setKey(&shape->fields[j], shape->field_names[j]);
+		setValue(&shape->fields[j], strtolower(getKey(&shape->fields[j])));
 	}
 }
 

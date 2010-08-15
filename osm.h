@@ -5,7 +5,6 @@
 /* shape */
 #include "shape.h"
 #include "transform.h"
-#include "keyvals.h"
 
 xmlNodePtr tagElement(KEYVAL *tag);
 xmlNodePtr nodeElement(NODE node);
