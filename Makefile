@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-Wall `xml2-config --cflags --libs` -lproj
 
-SOURCE=dbfopen.c shpopen.c keyvals.c transform.c osm.c shape.c shp2osm.c
+SOURCE=dbfopen.c shpopen.c keyvals.c transform.c ruleset.c osm.c shape.c shp2osm.c
 OBJECTS=${SOURCE:.c=.o}
 .PREFIXES = .c .o
 

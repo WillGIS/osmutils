@@ -14,6 +14,7 @@ static void longUsage()
 	fprintf(stderr, "    -h|--help\t\tHelp information.\n");
 	fprintf(stderr, "    -i|--infile\t\tShapefile input.\n");
 	fprintf(stderr, "    -o|--outfile\tOutput OSM file.\n");
+	fprintf(stderr, "    -r|--rulesfile\tRules file for mapping field names to osm tags\n");
 	fprintf(stderr, "    -s|--srid\t\tSpecify source SRID\n\t\t\t(default: no transformation performed; assumes SRID already is EPSG:4326).\n");
 	fprintf(stderr, "    -?|\t\t\tDisplay help information.\n");
 	fprintf(stderr, "\n");
@@ -23,15 +24,14 @@ void setConfigDefaults(SHPCONVERTCONFIG *config)
 {
 	config->infile = NULL;
 	config->outfile = NULL;
-	config->cliptable = NULL;
-	config->clipcolumn = NULL;
-	config->clipval = NULL;
+	config->rulesfile = NULL;
 }
 
 int main(int argc, char **argv)
 {
 	SHPCONVERTCONFIG *config;
 	SHAPE *shape;
+	RULESET *ruleset;
 
 	int c, ret;
 
@@ -45,6 +45,7 @@ int main(int argc, char **argv)
 	setConfigDefaults(config);
 
 	shape = malloc(sizeof(SHAPE));
+	ruleset = malloc(sizeof(RULESET));
 
 	/* Parse arguments and set configuration */
 	// TODO -h option does not require argument
@@ -53,11 +54,12 @@ int main(int argc, char **argv)
 		{"help", 0, 0, 'h'},
 		{"infile", 1, 0, 'i'},
 		{"outfile", 1, 0, 'o'},
+		{"rulesfile", 1, 0, 'r'},
 		{"srid", 1, 0, 's'}
 	};
 
 	// TODO infile and outfile as params, not options
-	while ((c = getopt_long(argc, argv, "i:o:hs:", long_options, &option_index)) != -1)
+	while ((c = getopt_long(argc, argv, "i:o:r:hs:", long_options, &option_index)) != -1)
 	{
 		switch(c)
 		{
@@ -67,6 +69,10 @@ int main(int argc, char **argv)
 			case 'o':
 				config->outfile = optarg;
 				break;
+			case 'r':
+				config->rulesfile = optarg;
+				ruleset = parseRules(config->rulesfile);				
+				break;		
 			case 's':
 				setShapeSrid(shape, optarg);
 				break;
@@ -115,7 +121,7 @@ int main(int argc, char **argv)
 		if (sridIsValid(shape->srid) == 1)
 		{
 			xmlDocPtr doc;
-			doc = createXmlDoc(shape);
+			doc = createXmlDoc(shape, ruleset);
 			xmlSaveFormatFileEnc(config->outfile, doc, "UTF-8", 1);
 			xmlFreeDoc(doc);
 		} else {

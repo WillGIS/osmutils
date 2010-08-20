@@ -76,6 +76,11 @@ const char *xmlEscape(const char *in)
 
 xmlNodePtr tagElement(KEYVAL *tag)
 {        
+
+	char *key;
+	
+	key = getKey(tag);
+
 	xmlNodePtr tagNode;
 	tagNode = xmlNewNode(NULL, BAD_CAST "tag");
 	xmlNewProp(tagNode, BAD_CAST "k", BAD_CAST xmlEscape(getKey(tag)));
@@ -230,12 +235,24 @@ void parseLine(xmlNodePtr root_node, SHAPE *shape)
 	}
 }
 
-xmlDocPtr createXmlDoc(SHAPE *shape)
+xmlDocPtr createXmlDoc(SHAPE *shape, RULESET *ruleset)
 {
+	int i, j;
 	xmlDocPtr doc = NULL;
 	xmlNodePtr root_node = NULL;
 
 	srid = shape->srid;
+
+	// apply ruleset, set alt field name to use for osm tags
+	for (i = 0; i < (shape->num_fields - 1); i++)
+	{
+		for (j = 0; j < (ruleset->num_rules - 1); j++) {
+			if ((strcmp(getKey(&shape->fields[i]), getKey(&ruleset->rules[j])) == 0))
+			{
+				setValue(&shape->fields[i], getValue(&ruleset->rules[j]));
+			}
+		}
+	}	
 	
 	doc = xmlNewDoc(BAD_CAST "1.0");
 	root_node = xmlNewNode(NULL, BAD_CAST "osm");

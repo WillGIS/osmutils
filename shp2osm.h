@@ -24,7 +24,5 @@ typedef struct shp_convert_config
 {
 	char *infile;
 	char *outfile;
-	char *cliptable;
-	char *clipcolumn;
-	char *clipval;
+	char *rulesfile;
 } SHPCONVERTCONFIG;

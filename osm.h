@@ -5,9 +5,10 @@
 /* shape */
 #include "shape.h"
 #include "transform.h"
+#include "ruleset.h"
 
 xmlNodePtr tagElement(KEYVAL *tag);
 xmlNodePtr nodeElement(NODE node);
 xmlNodePtr wayElement(int id);
 xmlNodePtr nodeRef(NODE node);
-xmlDocPtr createXmlDoc(SHAPE *shape);
+xmlDocPtr createXmlDoc(SHAPE *shape, RULESET *ruleset);

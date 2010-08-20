@@ -7,10 +7,8 @@ void initList(KEYVAL *head)
 
 	head->next = head;
 	head->prev = head;
-//	head->key = NULL;
-//	head->value = NULL;
-	head->key = "keyname";
-	head->value = "keyval";
+	head->key = NULL;
+	head->value = NULL;
 }
 
 void setKey(KEYVAL *tag, char *key)

@@ -28,7 +28,7 @@ void shpReadFields(SHAPE *shape)
 	shape->fields = malloc(shape->num_fields * sizeof(KEYVAL));
 
 	for (j = 0; j < shape->num_fields; j++)
-	{	
+	{
 		initList(&shape->fields[j]);
 
 		type = DBFGetFieldInfo(shape->handleDbf, j, name, &field_width, &field_precision);

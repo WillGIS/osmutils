@@ -1,3 +1,6 @@
+#ifndef KEYVAL_H
+#define KEYVAL_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -17,3 +20,4 @@ void setKey(KEYVAL *tag, char *key);
 void setValue(KEYVAL *tag, char *value);
 char * getKey(KEYVAL *tag);
 char * getValue(KEYVAL *tag);
+#endif
